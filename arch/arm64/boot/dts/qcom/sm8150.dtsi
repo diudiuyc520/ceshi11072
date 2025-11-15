@@ -557,18 +557,29 @@
 		method = "smc";
 	};
 
-	chosen {
-		bootargs = "quiet rcupdate.rcu_expedited=1 rcu_nocbs=0-3 cgroup.memory=nokmem,nosocket noirqdebug nodebugmon kpti=off cgroup_disable=pressure nosoftlockup mce=ignore_ce";
-		rng-seed = <0x12345678>;
+		chosen {
+		bootargs = "rcupdate.rcu_expedited=1 rcu_nocbs=0-7 cgroup.memory=nokmem,nosocket";
 	};
 
 	soc: soc { };
 
 	firmware: firmware {
 		android {
-			boot_devices = "soc/1d84000.ufshc";
 			compatible = "android,firmware";
 			shared_meta: vbmeta {
+				compatible = "android,vbmeta";
+				parts = "vbmeta,boot,system,vendor,dtbo";
+			};
+			android_q_fstab: fstab {
+				compatible = "android,fstab";
+				vendor {
+					compatible = "android,vendor";
+					dev = "/dev/block/platform/soc/8804000.ufshc/by-name/vendor";
+					type = "ext4";
+					mnt_flags = "ro,barrier=1,discard";
+					fsmgr_flags = "wait";
+					status = "ok";
+				};
 			};
 		};
 	};
